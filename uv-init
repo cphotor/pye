@@ -1,5 +1,5 @@
 #!/bin/bash
-# uv-init: 初始化 Python 项目并自动添加配置文件
+# uv-init: Initialize Python project and automatically add configuration files
 
 USE_LIB=false
 PROJECT_NAME=""
