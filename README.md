@@ -1,111 +1,115 @@
 # uv-init
 
-一个增强版的 Python 项目初始化脚本，基于 `uv` 工具，自动添加开发环境配置。
+An enhanced Python project initialization script based on the `uv` tool that automatically sets up a complete development environment.
 
-## 功能特性
+## Features
 
-- 🚀 基于 `uv init` 快速创建 Python 项目
-- 📚 支持库项目布局（`--lib` 选项）
-- 🐍 支持指定 Python 版本（`--python` 选项）
-- ⚙️ 自动配置 Ruff（代码格式化和检查）
-- 📝 自动配置 Pyright（类型检查）
-- 💻 自动配置 VS Code 设置
-- 🎯 一键设置完整的开发环境
+- 🚀 Fast Python project creation using `uv init`
+- 📚 Support for library project layout (`--lib` option)
+- 🐍 Support for specifying Python version (`--python` option)
+- ⚙️ Automatic Ruff configuration (code formatting and linting)
+- 📝 Automatic Pyright configuration (type checking)
+- 💻 Automatic VS Code settings
+- 🎯 One-click complete development environment setup
 
-## 安装
+## Installation
 
-1. 下载脚本：
+1. Download the script:
 ```bash
 curl -O https://raw.githubusercontent.com/yourusername/uv-init/main/uv-init
 ```
 
-2. 添加执行权限：
+2. Make it executable:
 ```bash
 chmod +x uv-init
 ```
 
-3. 移动到系统路径（可选）：
+3. Move to system path (optional):
 ```bash
 mv uv-init ~/.local/bin/
 ```
 
-## 使用方法
+## Usage
 
-### 基本用法
+### Basic Usage
 
 ```bash
-# 创建普通 Python 项目
+# Create a regular Python project
 uv-init my-project
 
-# 创建库项目
+# Create a library project
 uv-init --lib my-library
 
-# 指定 Python 版本
+# Specify Python version
 uv-init --python 3.11 my-project
 
-# 组合使用
+# Combine options
 uv-init --lib --python 3.12 my-awesome-lib
 ```
 
-### 命令行选项
+### Command Line Options
 
-- `--lib`: 创建库项目布局（src 目录结构）
-- `--python <version>`: 指定 Python 版本
-- `--help, -h`: 显示帮助信息
+- `--lib`: Create library project layout (src directory structure)
+- `--python <version>`: Specify Python version
+- `--help, -h`: Show help information
 
-## 自动配置的内容
+## Automatic Configurations
 
-### 1. VS Code 配置 (`.vscode/settings.json`)
-- 配置 Python 虚拟环境路径
-- 启用保存时格式化
-- 设置 Ruff 为默认格式化工具
-- 配置保存时自动整理导入和修复问题
+### 1. VS Code Configuration (`.vscode/settings.json`)
+- Configure Python virtual environment path
+- Enable format on save
+- Set Ruff as default formatter
+- Configure auto-organize imports and fix issues on save
 
-### 2. Pyright 配置 (`pyrightconfig.json`)
-- 设置 Python 版本
-- 标准类型检查模式
-- 优化的错误报告配置
+### 2. Pyright Configuration (`pyrightconfig.json`)
+- Set Python version
+- Standard type checking mode
+- Optimized error reporting configuration
 
-### 3. Ruff 配置 (追加到 `pyproject.toml`)
-- 代码行长度限制：88 字符
-- 目标 Python 版本：自动检测
-- 全面的代码检查规则
-- 自动修复所有可修复的问题
+### 3. Ruff Configuration (appended to `pyproject.toml`)
+- Code line length limit: 88 characters
+- Target Python version: auto-detect
+- Comprehensive code checking rules
+- Auto-fix all fixable issues
 
-## 示例
+## Examples
 
-创建一个名为 `my-app` 的项目：
+Create a project named `my-app`:
 
 ```bash
 uv-init my-app
 cd my-app
 ```
 
-这将创建：
-- 完整的 Python 项目结构
-- 配置好的开发环境
-- 可以直接开始编码的环境
+This creates:
+- Complete Python project structure
+- Configured development environment
+- Ready-to-code environment
 
-## 依赖要求
+## Requirements
 
-- [uv](https://github.com/astral-sh/uv): Python 包管理工具
-- Python 3.8+（推荐 3.11+）
+- [uv](https://github.com/astral-sh/uv): Python package management tool
+- Python 3.8+ (3.11+ recommended)
 
-## 许可证
+## License
 
-MIT License - 详见 [LICENSE](LICENSE) 文件
+MIT License - see [LICENSE](LICENSE) file for details
 
-## 贡献
+## Contributing
 
-欢迎提交 Issue 和 Pull Request！
+Issues and Pull Requests are welcome!
 
-## 为什么选择这个脚本？
+## Why choose this script?
 
-标准的 `uv init` 只创建基本的项目结构，这个脚本在此基础上：
+The standard `uv init` only creates basic project structure. This script adds:
 
-1. **开箱即用**：无需手动配置开发环境
-2. **最佳实践**：预设了现代 Python 开发的最佳配置
-3. **工具集成**：完美集成 VS Code、Ruff、Pyright
-4. **灵活配置**：支持不同类型的项目和 Python 版本
+1. **Out of the box**: No manual development environment setup needed
+2. **Best practices**: Pre-configured with modern Python development best practices
+3. **Tool integration**: Perfect integration with VS Code, Ruff, Pyright
+4. **Flexible configuration**: Support for different project types and Python versions
 
-让您专注于编码，而不是环境配置！
+Focus on coding, not environment configuration!
+
+---
+
+**Language:** English | [中文](README.zh.md)
