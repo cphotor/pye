@@ -1,11 +1,11 @@
 #!/bin/bash
-# pydev: Configure development environment for Python projects with Windsurf/VS Code settings
+# pyenv: Configure development environment for Python projects with Windsurf/VS Code settings
 
 PROJECT_DIR="."
 
 # Show usage information
 show_usage() {
-    echo "Usage: pydev [project-directory]"
+    echo "Usage: pyenv [project-directory]"
     echo "  project-directory   Target directory (default: current directory)"
     exit 0
 }

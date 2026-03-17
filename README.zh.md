@@ -15,17 +15,17 @@
 
 1. 下载脚本：
 ```bash
-curl -O https://raw.githubusercontent.com/yourusername/pydev/main/pydev
+curl -O https://raw.githubusercontent.com/yourusername/pyenv/main/pyenv
 ```
 
 2. 添加执行权限：
 ```bash
-chmod +x pydev
+chmod +x pyenv
 ```
 
 3. 移动到系统路径（可选）：
 ```bash
-mv pydev ~/.local/bin/
+mv pyenv ~/.local/bin/
 ```
 
 ## 使用方法
@@ -34,13 +34,13 @@ mv pydev ~/.local/bin/
 
 ```bash
 # 配置当前目录
-pydev
+pyenv
 
 # 配置指定项目目录
-pydev /path/to/my-project
+pyenv /path/to/my-project
 
 # 显示帮助
-pydev --help
+pyenv --help
 ```
 
 ### 典型工作流程
@@ -51,7 +51,7 @@ uv init my-project
 cd my-project
 
 # 2. 配置开发环境
-pydev
+pyenv
 
 # 3. 开始编码！
 ```

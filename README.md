@@ -15,17 +15,17 @@ A Python development environment configuration script that automatically sets up
 
 1. Download the script:
 ```bash
-curl -O https://raw.githubusercontent.com/yourusername/pydev/main/pydev
+curl -O https://raw.githubusercontent.com/yourusername/pyenv/main/pyenv
 ```
 
 2. Make it executable:
 ```bash
-chmod +x pydev
+chmod +x pyenv
 ```
 
 3. Move to system path (optional):
 ```bash
-mv pydev ~/.local/bin/
+mv pyenv ~/.local/bin/
 ```
 
 ## Usage
@@ -34,13 +34,13 @@ mv pydev ~/.local/bin/
 
 ```bash
 # Configure current directory
-pydev
+pyenv
 
 # Configure specific project directory
-pydev /path/to/my-project
+pyenv /path/to/my-project
 
 # Show help
-pydev --help
+pyenv --help
 ```
 
 ### Typical Workflow
@@ -51,7 +51,7 @@ uv init my-project
 cd my-project
 
 # 2. Configure development environment
-pydev
+pyenv
 
 # 3. Start coding!
 ```
