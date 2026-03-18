@@ -13,9 +13,9 @@
 -  智能配置更新（无重复）
 -  从项目自动检测 Python 版本
 - 🎯 一键设置开发环境
-- 🔧 适用于任何 Python 项目（uv、pip、poetry 等）
+- 🔧 兼容任何 Python 项目结构
 
-**推荐**: 本脚本专为与 [uv](https://github.com/astral-sh/uv) 无缝协作而设计，这是一个现代化的 Python 包管理工具。虽然它支持任何 Python 项目结构，但使用 uv 可以为项目初始化、依赖管理和虚拟环境处理提供最佳体验.
+**注意**: 本脚本需要安装 [uv](https://github.com/astral-sh/uv)，因为它使用 `uv venv` 来创建虚拟环境。uv 是一个现代化的 Python 包管理器，提供出色的项目管理能力。
 
 ## 安装
 
@@ -130,7 +130,7 @@ cd my-project
 
 - Python 3.8+（推荐 3.11+）
 - Bash shell 环境（macOS/Linux 自带）
-- 可选：[uv](https://github.com/astral-sh/uv) - 推荐的 Python 项目管理工具
+-**必需**: [uv](https://github.com/astral-sh/uv) - 现代化 Python 包管理器（用于创建虚拟环境和管理项目）
 
 ## VS Code 插件
 

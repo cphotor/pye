@@ -13,9 +13,10 @@ A Python development environment configuration script that automatically sets up
 -  Smart configuration updates (no duplicates)
 -  Auto-detect Python version from project
 - 🎯 One-click development environment setup
-- 🔧 Works with any Python project (uv, pip, poetry, etc.)
+- 🔧 Compatible with any Python project structure
 
-**Recommended**: This script is designed to work seamlessly with [uv](https://github.com/astral-sh/uv), a modern Python package manager. While it supports any Python project structure, using uv provides the best experience for project initialization, dependency management, and virtual environment handling.
+-**Recommended**: This script is designed to work seamlessly with [uv](https://github.com/astral-sh/uv), a modern Python package manager. While it supports any Python project structure, using uv provides the best experience for project initialization, dependency management, and virtual environment handling.
++**Note**: This script requires [uv](https://github.com/astral-sh/uv) to be installed, as it uses `uv venv` to create virtual environments. uv is a modern Python package manager that provides excellent project management capabilities.
 
 ## Installation
 
@@ -124,7 +125,7 @@ The script automatically detects Python version from:
 
 - Python 3.8+ (3.11+ recommended)
 - Bash shell environment (built-in on macOS/Linux)
-- Optional: [uv](https://github.com/astral-sh/uv) - Recommended Python project manager
+-**Required**: [uv](https://github.com/astral-sh/uv) - Modern Python package manager (used for virtual environment creation and project management)
 
 ## VS Code Plugins
 
