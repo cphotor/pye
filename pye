@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # pye: Configure development environment for Python projects with Windsurf/VS Code settings
-VERSION="1.1.3"
+VERSION="1.1.5"
 
 PROJECT_DIR="."
 LINE_LENGTH=88  # Default to PEP 8
@@ -165,29 +165,25 @@ if [ -f ".vscode/settings.json" ]; then
         echo "   - .vscode/settings.json already exists, checking for updates..."
     fi
     
-    # Check if python.formatting.provider exists
-    if grep -q "python.formatting.provider" .vscode/settings.json; then
+    # Check if editor.defaultFormatter exists
+    if grep -q "editor.defaultFormatter" .vscode/settings.json; then
         if [[ "$LANG_ENV" == "zh" ]]; then
-            echo "   - Python 格式化配置已存在，跳过..."
+            echo "   - VS Code 格式化配置已存在，跳过..."
         else
-            echo "   - Python formatting configuration already exists, skipping..."
+            echo "   - VS Code formatting configuration already exists, skipping..."
         fi
     else
         if [[ "$LANG_ENV" == "zh" ]]; then
-            echo "   - 正在添加 Python 格式化配置..."
+            echo "   - 正在添加 VS Code 格式化配置..."
         else
-            echo "   - Adding Python formatting configuration..."
+            echo "   - Adding VS Code formatting configuration..."
         fi
         # Create temp file with new settings and merge
         if ! jq '. + {
-            "python.formatting.provider": "ruff",
-            "python.formatting.ruffArgs": [],
             "[python]": {
+                "editor.defaultFormatter": "charliermarsh.ruff",
                 "editor.formatOnSave": true,
-                "editor.codeActionsOnSave": {
-                    "source.organizeImports.ruff": "explicit",
-                    "source.fixAll.ruff": "explicit"
-                }
+                "editor.quickFixesEnabled": true
             }
         }' .vscode/settings.json > .vscode/settings.json.tmp 2>/dev/null; then
             if [[ "$LANG_ENV" == "zh" ]]; then
@@ -208,14 +204,10 @@ else
     fi
     cat > .vscode/settings.json << 'VSCODEEOF'
 {
-    "python.formatting.provider": "ruff",
-    "python.formatting.ruffArgs": [],
     "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-            "source.organizeImports.ruff": "explicit",
-            "source.fixAll.ruff": "explicit"
-        }
+        "editor.quickFixesEnabled": true
     }
 }
 VSCODEEOF

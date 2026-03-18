@@ -1,6 +1,6 @@
 # pye
 
-**Version:** 1.1.4  
+**Version:** 1.1.5  
 **Language:** English | [中文](README.zh.md)
 
 A Python development environment configuration script that automatically sets up a complete coding environment with modern tooling.
@@ -10,8 +10,9 @@ A Python development environment configuration script that automatically sets up
 - ⚙️ Automatic Ruff configuration (code formatting and linting)
 - 📝 Automatic Pyright configuration (type checking)
 - 💻 Automatic VS Code/Windsurf settings
--  Smart configuration updates (no duplicates)
--  Auto-detect Python version from project
+- ✨ **Auto-fix on save** - Automatically fixes linting errors and organizes imports when saving files
+- 🔄 Smart configuration updates (no duplicates)
+- 🐍 Auto-detect Python version from project
 - 🎯 One-click development environment setup
 - 🔧 Compatible with any Python project structure
 
