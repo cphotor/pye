@@ -1,6 +1,6 @@
 # pye
 
-**Version:** 1.1.1  
+**Version:** 1.1.2  
 **Language:** English | [中文](README.zh.md)
 
 A Python development environment configuration script that automatically sets up a complete coding environment with modern tooling.
@@ -21,7 +21,7 @@ A Python development environment configuration script that automatically sets up
 
 1. Download the script:
 ```bash
-curl -O https://raw.githubusercontent.com/yourusername/pye/main/pye
+curl -O https://raw.githubusercontent.com/cphotor/pye/main/pye
 ```
 
 2. Make it executable:
@@ -67,24 +67,19 @@ pye -V
 ### Typical Workflow
 
 ```bash
-# 1. Create a new project (using uv, pip, poetry, etc.)
+# 1. Create a new project
 uv init my-project
 cd my-project
 
-# 2. Configure development environment
-pye
+# 2. Configure development environment (auto-creates venv and installs toolchain)
+./pye
 
-# 3. Create virtual environment
-uv venv
-
-# 4. Activate environment
-source .venv/bin/activate
-
-# 5. Install dependencies
-uv add .  # or uv add <package-name>, or use 'uv sync' to install configured dependencies
-
-# 6. Start coding!
+# 3. Start coding!
 ```
+
+**Note**: 
+- Use `uv run <script.py>` to run Python scripts directly in the virtual environment
+- Use `uv add <package-name>` to add third-party dependencies when needed (e.g., `uv add requests`)
 
 ## Automatic Configurations
 
