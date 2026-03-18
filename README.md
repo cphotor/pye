@@ -9,10 +9,12 @@ A Python development environment configuration script that automatically sets up
 - ⚙️ Automatic Ruff configuration (code formatting and linting)
 - 📝 Automatic Pyright configuration (type checking)
 - 💻 Automatic VS Code/Windsurf settings
-- � Smart configuration updates (no duplicates)
-- � Auto-detect Python version from project
+-  Smart configuration updates (no duplicates)
+-  Auto-detect Python version from project
 - 🎯 One-click development environment setup
 - 🔧 Works with any Python project (uv, pip, poetry, etc.)
+
+**Recommended**: This script is designed to work seamlessly with [uv](https://github.com/astral-sh/uv), a modern Python package manager. While it supports any Python project structure, using uv provides the best experience for project initialization, dependency management, and virtual environment handling.
 
 ## Installation
 
@@ -42,8 +44,23 @@ pye
 # Configure specific project directory
 pye /path/to/my-project
 
+# Configure code line length (default: 88, PEP 8 standard)
+# Recommended values:
+#   --pep8     : 88 characters (PEP 8 standard, default)
+#   --github   : 100 characters (GitHub standard)
+#   --wide     : 120 characters (wide screen mode)
+pye --pep8
+pye --github
+pye --wide
+
+# Combine options
+pye --github /path/to/my-project
+
 # Show help
-pye --help
+pye -H
+
+# Show version
+pye -V
 ```
 
 ### Typical Workflow
@@ -85,7 +102,10 @@ uv add .  # or uv add <package-name>, or use 'uv sync' to install configured dep
 - Optimized error reporting configuration
 
 ### 4. Ruff Configuration (appended to `pyproject.toml`)
-- Code line length limit: 88 characters
+- Code line length limit: **88 characters** (configurable with `--pep8`, `--github`, `--wide`)
+  - `--pep8`: 88 characters (PEP 8 standard, default)
+  - `--github`: 100 characters (GitHub standard)
+  - `--wide`: 120 characters (wide screen mode)
 - Target Python version: auto-detect
 - Comprehensive code checking rules
 - Auto-fix all fixable issues

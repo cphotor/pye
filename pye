@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # pye: Configure development environment for Python projects with Windsurf/VS Code settings
-VERSION="1.0.0"
+VERSION="1.1.0"
 
 PROJECT_DIR="."
+LINE_LENGTH=88  # Default to PEP 8
 
 # Detect language environment
 detect_language() {
@@ -19,10 +20,22 @@ LANG_ENV=$(detect_language)
 # Show usage information
 show_usage() {
     if [[ "$LANG_ENV" == "zh" ]]; then
-        echo "用法：pye [项目目录]"
+        echo "用法：pye [选项] [项目目录]"
+        echo "选项:"
+        echo "  --pep8                  设置代码行长度限制为 88（PEP 8 标准，默认）"
+        echo "  --github                设置代码行长度限制为 100（GitHub 标准）"
+        echo "  --wide                  设置代码行长度限制为 120（宽屏模式）"
+        echo "  -H, --help              显示帮助信息"
+        echo "  -V, --version           显示版本信息"
         echo "  项目目录   目标目录（默认：当前目录）"
     else
-        echo "Usage: pye [project-directory]"
+        echo "Usage: pye [options] [project-directory]"
+        echo "Options:"
+        echo "  --pep8                  Set code line length limit to 88 (PEP 8 standard, default)"
+        echo "  --github                Set code line length limit to 100 (GitHub standard)"
+        echo "  --wide                  Set code line length limit to 120 (wide screen mode)"
+        echo "  -H, --help              Show help message"
+        echo "  -V, --version           Show version information"
         echo "  project-directory   Target directory (default: current directory)"
     fi
     exit 0
@@ -37,15 +50,27 @@ show_version() {
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        --help|-h)
+        --help|-H)
             show_usage
             ;;
-        --version|-v)
+        --version|-V)
             show_version
+            ;;
+        --pep8)
+            LINE_LENGTH=88
+            shift
+            ;;
+        --github)
+            LINE_LENGTH=100
+            shift
+            ;;
+        --wide)
+            LINE_LENGTH=120
+            shift
             ;;
         -*)
             if [[ "$LANG_ENV" == "zh" ]]; then
-                echo "未知选项: $1"
+                echo "未知选项：$1"
             else
                 echo "Unknown option: $1"
             fi
@@ -71,7 +96,12 @@ if [ ! -d "$PROJECT_DIR" ]; then
 fi
 
 # Get project display name from directory
-PROJECT_DISPLAY_NAME=$(basename "$PROJECT_DIR")
+if [[ "$PROJECT_DIR" == "." ]]; then
+    # If using current directory, try to get the actual folder name
+    PROJECT_DISPLAY_NAME=$(basename "$(pwd)")
+else
+    PROJECT_DISPLAY_NAME=$(basename "$PROJECT_DIR")
+fi
 
 # Change to project directory
 cd "$PROJECT_DIR"
@@ -315,7 +345,7 @@ if [ -f pyproject.toml ]; then
             if (in_ruff_section == 0) {
                 print ""
                 print "[tool.ruff]"
-                print "line-length = 88"
+                print "line-length = '"${LINE_LENGTH}"'"
                 print "target-version = \"'"${TARGET_VERSION}"'\""
                 print ""
                 print "[tool.ruff.lint]"
@@ -331,7 +361,7 @@ if [ -f pyproject.toml ]; then
             } else {
                 print ""
                 print "[tool.ruff]"
-                print "line-length = 88"
+                print "line-length = '"${LINE_LENGTH}"'"
                 print "target-version = \"'"${TARGET_VERSION}"'\""
                 print ""
                 print "[tool.ruff.lint]"
@@ -357,7 +387,7 @@ if [ -f pyproject.toml ]; then
         cat >> pyproject.toml << RUFFEOF
 
 [tool.ruff]
-line-length = 88
+line-length = ${LINE_LENGTH}
 target-version = "$TARGET_VERSION"
 
 [tool.ruff.lint]
@@ -476,7 +506,7 @@ if [[ "$LANG_ENV" == "zh" ]]; then
         echo "   - 已创建虚拟环境"
     fi
     echo ""
-    echo "🐍 请使用 'uv add' 为项目添加依赖，或使用 'uv sync' 来安装已配置的依赖。"
+    echo "🐍 请使用 'uv add' 为项目 \"$PROJECT_DISPLAY_NAME\" 添加依赖，或使用 'uv sync' 来安装已配置的依赖。"
 else
     echo "✅ Development environment configured/updated for \"$PROJECT_DISPLAY_NAME\" project!"
     echo "   - Checked and updated configurations as needed"
@@ -490,7 +520,7 @@ else
         echo "   - Virtual environment created"
     fi
     echo ""
-    echo "🐍 Please use 'uv add' to add dependencies to your project, or use 'uv sync' to install configured dependencies."
+    echo "🐍 Please use 'uv add' to add dependencies to your project \"$PROJECT_DISPLAY_NAME\", or use 'uv sync' to install configured dependencies."
 fi
 
 if [[ "$LANG_ENV" == "zh" ]]; then
