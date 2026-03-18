@@ -1,12 +1,29 @@
 #!/bin/bash
+
 # pye: Configure development environment for Python projects with Windsurf/VS Code settings
 
 PROJECT_DIR="."
 
+# Detect language environment
+detect_language() {
+    if [[ "$LANG" =~ zh_CN ]] || [[ "$LANG" =~ zh_TW ]] || [[ "$LC_ALL" =~ zh ]] || [[ "$LANGUAGE" =~ zh ]]; then
+        echo "zh"
+    else
+        echo "en"
+    fi
+}
+
+LANG_ENV=$(detect_language)
+
 # Show usage information
 show_usage() {
-    echo "Usage: pye [project-directory]"
-    echo "  project-directory   Target directory (default: current directory)"
+    if [[ "$LANG_ENV" == "zh" ]]; then
+        echo "用法: pye [项目目录]"
+        echo "  项目目录   目标目录（默认：当前目录）"
+    else
+        echo "Usage: pye [project-directory]"
+        echo "  project-directory   Target directory (default: current directory)"
+    fi
     exit 0
 }
 
@@ -17,7 +34,11 @@ while [[ $# -gt 0 ]]; do
             show_usage
             ;;
         -*)
-            echo "Unknown option: $1"
+            if [[ "$LANG_ENV" == "zh" ]]; then
+                echo "未知选项: $1"
+            else
+                echo "Unknown option: $1"
+            fi
             show_usage
             ;;
         *)
@@ -29,10 +50,18 @@ done
 
 # Validate project directory
 if [ ! -d "$PROJECT_DIR" ]; then
-    echo "Error: Directory '$PROJECT_DIR' does not exist."
-    echo "Please create the project first with: uv init [project-name] or python -m venv .venv"
+    if [[ "$LANG_ENV" == "zh" ]]; then
+        echo "错误：目录 '$PROJECT_DIR' 不存在。"
+        echo "请先创建项目：uv init [项目名] 或 python -m venv .venv"
+    else
+        echo "Error: Directory '$PROJECT_DIR' does not exist."
+        echo "Please create the project first with: uv init [project-name] or python -m venv .venv"
+    fi
     exit 1
 fi
+
+# Get project display name from directory
+PROJECT_DISPLAY_NAME=$(basename "$PROJECT_DIR")
 
 # Change to project directory
 cd "$PROJECT_DIR"
@@ -55,12 +84,24 @@ if [ -f "pyproject.toml" ]; then
     # Default to 3.13 if still not found
     if [ -z "$PYTHON_VERSION" ]; then
         PYTHON_VERSION="3.13"
-        echo "Warning: Could not detect Python version, using default 3.13"
+        if [[ "$LANG_ENV" == "zh" ]]; then
+            echo "警告: 无法检测 Python 版本，使用默认版本 3.13"
+        else
+            echo "Warning: Could not detect Python version, using default 3.13"
+        fi
     else
-        echo "Detected Python version: $PYTHON_VERSION"
+        if [[ "$LANG_ENV" == "zh" ]]; then
+            echo "检测到 Python 版本: $PYTHON_VERSION"
+        else
+            echo "Detected Python version: $PYTHON_VERSION"
+        fi
     fi
 else
-    echo "Error: pyproject.toml not found. Please run this in a Python project directory."
+    if [[ "$LANG_ENV" == "zh" ]]; then
+        echo "错误: 未找到 pyproject.toml。请在 Python 项目目录中运行此脚本。"
+    else
+        echo "Error: pyproject.toml not found. Please run this in a Python project directory."
+    fi
     exit 1
 fi
 
@@ -71,14 +112,66 @@ TARGET_VERSION="py${PYTHON_VERSION//./}"
 # Create .vscode directory
 mkdir -p .vscode
 
-# Create settings.json
-cat > .vscode/settings.json << 'VSCODEEOF'
+# Create/update settings.json
+if [[ "$LANG_ENV" == "zh" ]]; then
+    echo "🔧 正在更新 .vscode/settings.json..."
+else
+    echo "🔧 Updating .vscode/settings.json..."
+fi
+if [ -f ".vscode/settings.json" ]; then
+    if [[ "$LANG_ENV" == "zh" ]]; then
+        echo "   - .vscode/settings.json 已存在，检查更新..."
+    else
+        echo "   - .vscode/settings.json already exists, checking for updates..."
+    fi
+    
+    # Check if python.formatting.provider exists
+    if grep -q "python.formatting.provider" .vscode/settings.json; then
+        if [[ "$LANG_ENV" == "zh" ]]; then
+            echo "   - Python 格式化配置已存在，跳过..."
+        else
+            echo "   - Python formatting configuration already exists, skipping..."
+        fi
+    else
+        if [[ "$LANG_ENV" == "zh" ]]; then
+            echo "   - 正在添加 Python 格式化配置..."
+        else
+            echo "   - Adding Python formatting configuration..."
+        fi
+        # Create temp file with new settings and merge
+        if ! jq '. + {
+            "python.formatting.provider": "ruff",
+            "python.formatting.ruffArgs": [],
+            "[python]": {
+                "editor.formatOnSave": true,
+                "editor.codeActionsOnSave": {
+                    "source.organizeImports.ruff": "explicit",
+                    "source.fixAll.ruff": "explicit"
+                }
+            }
+        }' .vscode/settings.json > .vscode/settings.json.tmp 2>/dev/null; then
+            if [[ "$LANG_ENV" == "zh" ]]; then
+                echo "   ⚠️ 警告：更新 settings.json 失败，跳过..."
+            else
+                echo "   ⚠️ Warning: Failed to update settings.json, skipping..."
+            fi
+            rm -f .vscode/settings.json.tmp
+        else
+            mv .vscode/settings.json.tmp .vscode/settings.json
+        fi
+    fi
+else
+    if [[ "$LANG_ENV" == "zh" ]]; then
+        echo "   - 正在创建新的 .vscode/settings.json..."
+    else
+        echo "   - Creating new .vscode/settings.json..."
+    fi
+    cat > .vscode/settings.json << 'VSCODEEOF'
 {
-    "python.venvPath": ".",
-    "python.venvFolder": ".venv",
+    "python.formatting.provider": "ruff",
+    "python.formatting.ruffArgs": [],
     "[python]": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.codeActionsOnSave": {
             "source.organizeImports.ruff": "explicit",
             "source.fixAll.ruff": "explicit"
@@ -86,9 +179,89 @@ cat > .vscode/settings.json << 'VSCODEEOF'
     }
 }
 VSCODEEOF
+fi
 
-# Create pyrightconfig.json
-cat > pyrightconfig.json << PYRIGHTEOF
+# Create/update extensions.json for recommended extensions
+if [[ "$LANG_ENV" == "zh" ]]; then
+    echo "🔧 正在更新 .vscode/extensions.json..."
+else
+    echo "🔧 Updating .vscode/extensions.json..."
+fi
+if [ -f ".vscode/extensions.json" ]; then
+    if [[ "$LANG_ENV" == "zh" ]]; then
+        echo "   - 正在更新现有的 .vscode/extensions.json..."
+    else
+        echo "   - Updating existing .vscode/extensions.json..."
+    fi
+    # Ensure recommended extensions include our suggestions
+    if ! jq '{
+        recommendations: [
+            "ms-python.python",
+            "charliermarsh.ruff"
+        ]
+    }' .vscode/extensions.json > .vscode/extensions.json.tmp 2>/dev/null; then
+        if [[ "$LANG_ENV" == "zh" ]]; then
+            echo "   ⚠️ 警告：更新 extensions.json 失败，跳过..."
+        else
+            echo "   ⚠️ Warning: Failed to update extensions.json, skipping..."
+        fi
+        rm -f .vscode/extensions.json.tmp
+    else
+        mv .vscode/extensions.json.tmp .vscode/extensions.json
+    fi
+else
+    if [[ "$LANG_ENV" == "zh" ]]; then
+        echo "   - 正在创建新的 .vscode/extensions.json..."
+    else
+        echo "   - Creating new .vscode/extensions.json..."
+    fi
+    cat > .vscode/extensions.json << 'EXTENSIONSEOF'
+{
+    "recommendations": [
+        "ms-python.python",
+        "charliermarsh.ruff"
+    ]
+}
+EXTENSIONSEOF
+fi
+
+# Create/update pyrightconfig.json
+if [[ "$LANG_ENV" == "zh" ]]; then
+    echo "🔧 正在更新 pyrightconfig.json..."
+else
+    echo "🔧 Updating pyrightconfig.json..."
+fi
+if [ -f "pyrightconfig.json" ]; then
+    if [[ "$LANG_ENV" == "zh" ]]; then
+        echo "   - 正在更新现有的 pyrightconfig.json..."
+    else
+        echo "   - Updating existing pyrightconfig.json..."
+    fi
+    # Update pythonVersion and other key settings
+    if ! jq --arg py_version "$PY_VERSION" '{
+        pythonVersion: $py_version,
+        typeCheckingMode: "standard",
+        reportMissingImports: false,
+        reportUndefinedVariable: false,
+        reportMissingTypeStubs: true,
+        reportGeneralTypeIssues: true
+    }' pyrightconfig.json > pyrightconfig.json.tmp 2>/dev/null; then
+        if [[ "$LANG_ENV" == "zh" ]]; then
+            echo "   ⚠️ 警告：更新 pyrightconfig.json 失败，跳过..."
+        else
+            echo "   ⚠️ Warning: Failed to update pyrightconfig.json, skipping..."
+        fi
+        rm -f pyrightconfig.json.tmp
+    else
+        mv pyrightconfig.json.tmp pyrightconfig.json
+    fi
+else
+    if [[ "$LANG_ENV" == "zh" ]]; then
+        echo "   - 正在创建新的 pyrightconfig.json..."
+    else
+        echo "   - Creating new pyrightconfig.json..."
+    fi
+    cat > pyrightconfig.json << PYRIGHTEOF
 {
   "pythonVersion": "$PY_VERSION",
   "typeCheckingMode": "standard",
@@ -98,10 +271,80 @@ cat > pyrightconfig.json << PYRIGHTEOF
   "reportGeneralTypeIssues": true
 }
 PYRIGHTEOF
+fi
 
-# Append Ruff configuration to pyproject.toml
+# Update configurations in pyproject.toml
 if [ -f pyproject.toml ]; then
-cat >> pyproject.toml << RUFFEOF
+    if [[ "$LANG_ENV" == "zh" ]]; then
+        echo "🔧 正在更新 pyproject.toml..."
+    else
+        echo "🔧 Updating pyproject.toml..."
+    fi
+    
+    # Update [tool.ruff] section
+    if grep -q "^\[tool.ruff\]" pyproject.toml; then
+        if [[ "$LANG_ENV" == "zh" ]]; then
+            echo "   - 正在更新现有的 [tool.ruff] 配置..."
+        else
+            echo "   - Updating existing [tool.ruff] configuration..."
+        fi
+        
+        # Create temporary file with updated ruff config - remove all ruff sections first
+        awk '
+        BEGIN { in_ruff_section = 0 }
+        /^\[tool\.ruff/ { 
+            in_ruff_section = 1
+            next
+        }
+        /^\[tool\./ && in_ruff_section {
+            in_ruff_section = 0
+            print $0
+            next
+        }
+        END {
+            if (in_ruff_section == 0) {
+                print ""
+                print "[tool.ruff]"
+                print "line-length = 88"
+                print "target-version = \"'"${TARGET_VERSION}"'\""
+                print ""
+                print "[tool.ruff.lint]"
+                print "select = ["
+                print "  \"E\", \"W\", \"F\", \"I\", \"N\", \"UP\", \"B\", \"A\", \"C4\", \"T20\", \"SIM\", \"ARG\", \"PTH\""
+                print "]"
+                print "fixable = [\"ALL\"]"
+                print "ignore = [\"E501\", \"T20\"]"
+                print ""
+                print "[tool.ruff.format]"
+                print "quote-style = \"double\""
+                print "indent-style = \"space\""
+            } else {
+                print ""
+                print "[tool.ruff]"
+                print "line-length = 88"
+                print "target-version = \"'"${TARGET_VERSION}"'\""
+                print ""
+                print "[tool.ruff.lint]"
+                print "select = ["
+                print "  \"E\", \"W\", \"F\", \"I\", \"N\", \"UP\", \"B\", \"A\", \"C4\", \"T20\", \"SIM\", \"ARG\", \"PTH\""
+                print "]"
+                print "fixable = [\"ALL\"]"
+                print "ignore = [\"E501\", \"T20\"]"
+                print ""
+                print "[tool.ruff.format]"
+                print "quote-style = \"double\""
+                print "indent-style = \"space\""
+            }
+        }
+        !in_ruff_section { print }
+        ' pyproject.toml > pyproject.toml.tmp && mv pyproject.toml.tmp pyproject.toml
+    else
+        if [[ "$LANG_ENV" == "zh" ]]; then
+            echo "   - 正在添加新的 [tool.ruff] 配置..."
+        else
+            echo "   - Adding new [tool.ruff] configuration..."
+        fi
+        cat >> pyproject.toml << RUFFEOF
 
 [tool.ruff]
 line-length = 88
@@ -118,20 +361,134 @@ ignore = ["E501", "T20"]
 quote-style = "double"
 indent-style = "space"
 RUFFEOF
+    fi
+    
+    # Update [tool.vscode] section
+    if grep -q "^\[tool.vscode\]" pyproject.toml; then
+        if [[ "$LANG_ENV" == "zh" ]]; then
+            echo "   - 正在更新现有的 [tool.vscode] 配置..."
+        else
+            echo "   - Updating existing [tool.vscode] configuration..."
+        fi
+        
+        # Remove vscode section and add new one at end
+        awk '
+        BEGIN { in_vscode_section = 0 }
+        /^\[tool\.vscode/ { 
+            in_vscode_section = 1
+            next
+        }
+        /^\[tool\./ && in_vscode_section {
+            in_vscode_section = 0
+            print $0
+            next
+        }
+        END {
+            if (in_vscode_section == 0) {
+                print ""
+                print "# VS Code/Windsurf Python environment configuration"
+                print "[tool.vscode]"
+                print "python.terminal.activateEnvironment = true"
+                print "python.workspaceSearchPaths = [\"./**/.venv\"]"
+                print "python.terminal.autoActivationType = \"shellStartup\""
+            } else {
+                print ""
+                print "# VS Code/Windsurf Python environment configuration"
+                print "[tool.vscode]"
+                print "python.terminal.activateEnvironment = true"
+                print "python.workspaceSearchPaths = [\"./**/.venv\"]"
+                print "python.terminal.autoActivationType = \"shellStartup\""
+            }
+        }
+        !in_vscode_section { print }
+        ' pyproject.toml > pyproject.toml.tmp && mv pyproject.toml.tmp pyproject.toml
+    else
+        if [[ "$LANG_ENV" == "zh" ]]; then
+            echo "   - 正在添加新的 [tool.vscode] 配置..."
+        else
+            echo "   - Adding new [tool.vscode] configuration..."
+        fi
+        cat >> pyproject.toml << VSCODEEOF
+
+# VS Code/Windsurf Python environment configuration
+[tool.vscode]
+python.terminal.activateEnvironment = true
+python.workspaceSearchPaths = ["./**/.venv"]
+python.terminal.autoActivationType = "shellStartup"
+VSCODEEOF
+    fi
 else
-    echo "Warning: pyproject.toml not found. Please run this in a Python project directory."
+    if [[ "$LANG_ENV" == "zh" ]]; then
+        echo "警告: 未找到 pyproject.toml。请在 Python 项目目录中运行此脚本。"
+    else
+        echo "Warning: pyproject.toml not found. Please run this in a Python project directory."
+    fi
 fi
 
-echo "✅ Development environment configured for '$(basename "$PROJECT_DIR")'!"
-echo "   - Ruff configuration added to pyproject.toml"
-echo "   - Pyright configuration added"
-echo "   - VS Code/Windsurf settings added"
-echo ""
-echo "🐍 Next steps:"
-echo "   1. Create virtual environment: uv venv"
-echo "   2. Activate environment: source .venv/bin/activate"
-echo "   3. Install dependencies: uv add .  # or uv add <package-name>"
-echo ""
-echo "� Recommended plugins for better experience:"
-echo "   - VS Code users: Ruff (charliermarsh.ruff) + Pylance (ms-python.vscode-pylance)"
-echo "   - Windsurf users: Ruff (charliermarsh.ruff) + Windsurf Pyright (built-in)"
+# Check and handle virtual environment
+if [ -d ".venv" ]; then
+    VENV_EXISTS=true
+else
+    VENV_EXISTS=false
+    # Check if uv is available
+    if ! command -v uv &> /dev/null; then
+        if [[ "$LANG_ENV" == "zh" ]]; then
+            echo "❌ 未找到 uv 命令。请先安装 uv: https://docs.astral.sh/uv/getting-started/installation/"
+            echo "   macOS: curl -LsSf https://astral.sh/uv/install.sh | sh"
+            echo "   或使用: brew install uv"
+        else
+            echo "❌ uv command not found. Please install uv first: https://docs.astral.sh/uv/getting-started/installation/"
+            echo "   macOS: curl -LsSf https://astral.sh/uv/install.sh | sh"
+            echo "   Or use: brew install uv"
+        fi
+        exit 1
+    fi
+    
+    # Create virtual environment
+    if [[ "$LANG_ENV" == "zh" ]]; then
+        echo "🔧 正在创建虚拟环境..."
+    else
+        echo "🔧 Creating virtual environment..."
+    fi
+    uv venv
+fi
+
+if [[ "$LANG_ENV" == "zh" ]]; then
+    echo "✅ 已为 \"$PROJECT_DISPLAY_NAME\" 项目配置/更新开发环境！"
+    echo "   - 已检查并按需更新配置"
+    echo "   - pyproject.toml 中的 Ruff 配置"
+    echo "   - Pyright 配置" 
+    echo "   - VS Code/Windsurf 设置"
+    echo "   - 已配置推荐扩展"
+    if [ "$VENV_EXISTS" = true ]; then
+        echo "   - 虚拟环境已存在"
+    else
+        echo "   - 已创建虚拟环境"
+    fi
+    echo ""
+    echo "🐍 请使用 'uv add' 为项目添加依赖，或使用 'uv sync' 来安装已配置的依赖。"
+else
+    echo "✅ Development environment configured/updated for \"$PROJECT_DISPLAY_NAME\" project!"
+    echo "   - Checked and updated configurations as needed"
+    echo "   - Ruff configuration in pyproject.toml"
+    echo "   - Pyright configuration" 
+    echo "   - VS Code/Windsurf settings"
+    echo "   - Recommended extensions configured"
+    if [ "$VENV_EXISTS" = true ]; then
+        echo "   - Virtual environment already exists"
+    else
+        echo "   - Virtual environment created"
+    fi
+    echo ""
+    echo "🐍 Please use 'uv add' to add dependencies to your project, or use 'uv sync' to install configured dependencies."
+fi
+
+if [[ "$LANG_ENV" == "zh" ]]; then
+    echo "🔌 推荐插件以获得更好体验:"
+    echo "   - VS Code 用户: Ruff (charliermarsh.ruff) + Pylance (ms-python.vscode-pylance)"
+    echo "   - Windsurf 用户: Ruff (charliermarsh.ruff) + Windsurf Pyright (内置)"
+else
+    echo "🔌 Recommended plugins for better experience:"
+    echo "   - VS Code users: Ruff (charliermarsh.ruff) + Pylance (ms-python.vscode-pylance)"
+    echo "   - Windsurf users: Ruff (charliermarsh.ruff) + Windsurf Pyright (built-in)"
+fi

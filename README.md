@@ -9,7 +9,8 @@ A Python development environment configuration script that automatically sets up
 - ⚙️ Automatic Ruff configuration (code formatting and linting)
 - 📝 Automatic Pyright configuration (type checking)
 - 💻 Automatic VS Code/Windsurf settings
-- 🐍 Auto-detect Python version from project
+- � Smart configuration updates (no duplicates)
+- � Auto-detect Python version from project
 - 🎯 One-click development environment setup
 - 🔧 Works with any Python project (uv, pip, poetry, etc.)
 
@@ -55,27 +56,44 @@ cd my-project
 # 2. Configure development environment
 pye
 
-# 3. Start coding!
+# 3. Create virtual environment
+uv venv
+
+# 4. Activate environment
+source .venv/bin/activate
+
+# 5. Install dependencies
+uv add .  # or uv add <package-name>, or use 'uv sync' to install configured dependencies
+
+# 6. Start coding!
 ```
 
 ## Automatic Configurations
 
 ### 1. VS Code/Windsurf Configuration (`.vscode/settings.json`)
-- Configure Python virtual environment path
+- Python formatting with Ruff
 - Enable format on save
-- Set Ruff as default formatter
 - Configure auto-organize imports and fix issues on save
 
-### 2. Pyright Configuration (`pyrightconfig.json`)
+### 2. VS Code/Windsurf Extensions (`.vscode/extensions.json`)
+- Auto-recommend Python extension (auto-selects Pylance/Pyright)
+- Auto-recommend Ruff extension for formatting
+
+### 3. Pyright Configuration (`pyrightconfig.json`)
 - Auto-detect Python version from project
 - Standard type checking mode
 - Optimized error reporting configuration
 
-### 3. Ruff Configuration (appended to `pyproject.toml`)
+### 4. Ruff Configuration (appended to `pyproject.toml`)
 - Code line length limit: 88 characters
 - Target Python version: auto-detect
 - Comprehensive code checking rules
 - Auto-fix all fixable issues
+
+### 5. VS Code/Windsurf Environment Settings (in `pyproject.toml`)
+- Virtual environment search paths
+- Terminal auto-activation
+- Shell startup activation for better Copilot support
 
 ## Python Version Detection
 
@@ -114,8 +132,10 @@ Issues and Pull Requests are welcome!
 Setting up a Python development environment manually can be time-consuming. This script:
 
 1. **Saves time**: No manual configuration needed
-2. **Best practices**: Pre-configured with modern Python development standards
-3. **Tool integration**: Perfect integration with VS Code/Windsurf, Ruff, Pyright
-4. **Universal**: Works with any Python project setup
+2. **Smart updates**: Detects and updates existing configurations without creating duplicates
+3. **Best practices**: Pre-configured with modern Python development standards
+4. **Tool integration**: Perfect integration with VS Code/Windsurf, Ruff, Pyright
+5. **Universal**: Works with any Python project setup
+6. **Idempotent**: Safe to run multiple times - always ensures correct configuration
 
 Focus on coding, not environment configuration!

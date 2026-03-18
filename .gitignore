@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Project state files (AI session management)
+.context
+.session
+DEVELOPMENT.md
+PROGRESS.md
+TODO.md
+PROJECT_STATUS.md
+
+# OS
+.DS_Store
+Thumbs.db

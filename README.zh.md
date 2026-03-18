@@ -9,7 +9,8 @@
 - ⚙️ 自动配置 Ruff（代码格式化和检查）
 - 📝 自动配置 Pyright（类型检查）
 - 💻 自动配置 VS Code/Windsurf 设置
-- 🐍 从项目自动检测 Python 版本
+- � 智能配置更新（无重复）
+- � 从项目自动检测 Python 版本
 - 🎯 一键设置开发环境
 - 🔧 适用于任何 Python 项目（uv、pip、poetry 等）
 
@@ -55,27 +56,44 @@ cd my-project
 # 2. 配置开发环境
 pye
 
-# 3. 开始编码！
+# 3. 创建虚拟环境
+uv venv
+
+# 4. 激活环境
+source .venv/bin/activate
+
+# 5. 安装依赖
+uv add .  # 或 uv add <package-name>，或使用 'uv sync' 安装项目已配置的依赖
+
+# 6. 开始编码！
 ```
 
 ## 自动配置的内容
 
 ### 1. VS Code/Windsurf 配置 (`.vscode/settings.json`)
-- 配置 Python 虚拟环境路径
+- Python 格式化配置（使用 Ruff）
 - 启用保存时格式化
-- 设置 Ruff 为默认格式化工具
 - 配置保存时自动整理导入和修复问题
 
-### 2. Pyright 配置 (`pyrightconfig.json`)
+### 2. VS Code/Windsurf 扩展 (`.vscode/extensions.json`)
+- 自动推荐 Python 扩展（自动选择 Pylance/Pyright）
+- 自动推荐 Ruff 扩展用于格式化
+
+### 3. Pyright 配置 (`pyrightconfig.json`)
 - 从项目自动检测 Python 版本
 - 标准类型检查模式
 - 优化的错误报告配置
 
-### 3. Ruff 配置 (追加到 `pyproject.toml`)
+### 4. Ruff 配置 (追加到 `pyproject.toml`)
 - 代码行长度限制：88 字符
 - 目标 Python 版本：自动检测
 - 全面的代码检查规则
 - 自动修复所有可修复的问题
+
+### 5. VS Code/Windsurf 环境设置 (在 `pyproject.toml` 中)
+- 虚拟环境搜索路径
+- 终端自动激活
+- Shell 启动激活以获得更好的 Copilot 支持
 
 ## 示例
 
@@ -116,11 +134,13 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 
 ## 为什么选择这个脚本？
 
-标准的 `uv init` 只创建基本的项目结构，这个脚本在此基础上：
+手动设置 Python 开发环境可能很耗时。这个脚本：
 
-1. **开箱即用**：无需手动配置开发环境
-2. **最佳实践**：预设了现代 Python 开发的最佳配置
-3. **工具集成**：完美集成 VS Code、Ruff、Pyright
-4. **灵活配置**：支持不同类型的项目和 Python 版本
+1. **节省时间**：无需手动配置
+2. **智能更新**：检测并更新现有配置，不会创建重复内容
+3. **最佳实践**：预设了现代 Python 开发的最佳配置
+4. **工具集成**：完美集成 VS Code/Windsurf、Ruff、Pyright
+5. **通用性**：适用于任何 Python 项目设置
+6. **幂等性**：可以安全地多次运行 - 始终确保配置正确
 
 让您专注于编码，而不是环境配置！
